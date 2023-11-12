@@ -46,10 +46,10 @@ function userinput() {
       viewDepartment()
     }
     else if (answer.Menu === "View all employees") {
-      ViewallEmployees()
+      viewEmployees()
     }
     else if (answer.Menu === "View all roles") {
-      ViewallRoles()
+      viewRoles()
     }
   })
 }
@@ -60,19 +60,19 @@ function viewDepartment() {
     userinput();
   });
 }
-function ViewallEmployees() {
+function viewEmployees() {
   db.query('SELECT * FROM employee', function (err, results) {
     console.table(results);
     userinput();
   });
 }
-function ViewallRoles() {
+function viewRoles() {
   db.query('SELECT * FROM role', function (err, results) {
     console.table(results);
     userinput();
   });
 }
-function AddDepartment() {
+function addDepartment() {
   inquirer.prompt(
     {
       type: "input",
