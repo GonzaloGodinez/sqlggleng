@@ -32,30 +32,34 @@ function userinput() {
     name: "Menu",
     message: "What would you like to enter?",
     choices: [
-      "View all department",
-      "View all employees",
-      "View all roles",
-      "add a department",
-      "add role",
-      "add employee",
-      "update employee role"
+      "View All Department",
+      "Add a Department",
+      "View All Employees",
+      "Add Employee",
+      "Update Employee Role",
+      "View All Roles",
+      "Add role",
+      "Quit"
     ]
 
   }).then((answer) => {
-    if (answer.Menu === "View all department") {
+    if (answer.Menu === "View All Department") {
       viewDepartment()
     }
-    else if (answer.Menu === "View all employees") {
+    else if (answer.Menu === "Add a Department") {
+      AddDepartment()
+    }
+    else if (answer.Menu === "View All Employees") {
       viewEmployees()
     }
-    else if (answer.Menu === "View all roles") {
+    else if (answer.Menu === "View All Roles") {
       viewRoles()
     }
   })
 }
 
 function viewDepartment() {
-  db.query('SELECT * FROM department', function (err, results) {
+  db.query('SELECT * FROM Department', function (err, results) {
     console.table(results);
     userinput();
   });
@@ -72,18 +76,19 @@ function viewRoles() {
     userinput();
   });
 }
-function addDepartment() {
+function AddDepartment() {
   inquirer.prompt(
     {
       type: "input",
       name: "name",
-      message: "please enter department name",
+      message: "Please enter Department name",
     }
   ) .then((answer) => {
-    db.query('INSERT INTO department (name) VALUE (?)', [
+    db.query('INSERT INTO Department (name) VALUE (?)', [
       answer.name
     ], function (err, results) {
       console.table(results);
+      console.log(`Added ${answer.name} to the database`)
       userinput();
     });
   })
