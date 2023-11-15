@@ -33,12 +33,15 @@ function userinput() {
     message: "What would you like to enter?",
     choices: [
       "View All Department",
-      "Add a Department",
+      "Add Department",
       "View All Employees",
       "Add Employee",
+      "Add First Name"
+      "Add Last Name"
       "Update Employee Role",
       "View All Roles",
-      "Add role",
+      "Add Role",
+      "Add Salary",
       "Quit"
     ]
 
@@ -46,14 +49,32 @@ function userinput() {
     if (answer.Menu === "View All Department") {
       viewDepartment()
     }
-    else if (answer.Menu === "Add a Department") {
+    else if (answer.Menu === "Add Department") {
       AddDepartment()
     }
     else if (answer.Menu === "View All Employees") {
       viewEmployees()
     }
+    else if (answer.Menu === "Add Employee") {
+      AddEmployee()
+    }
+    else if (answer.Menu === "Add First Name") {
+      AddFirstname()
+    }
+    else if (answer.Menu === "Add Last Name") {
+      AddLastname()
+    }
+    else if (answer.Menu === "Update Employee Role") {
+      UpdateEmployeeRole()
+    }
     else if (answer.Menu === "View All Roles") {
       viewRoles()
+    }
+    else if (answer.Menu === "Add Role") {
+      AddRole()
+    }
+    else if (answer.Menu === "Add Salary") {
+      AddSalary()
     }
   })
 }
@@ -88,7 +109,24 @@ function AddDepartment() {
       answer.name
     ], function (err, results) {
       console.table(results);
-      console.log(`Added ${answer.name} to the database`)
+      console.log(`Added ${answer.name} to Department table`)
+      userinput();
+    });
+  })
+}
+function AddEmployee() {
+  inquirer.prompt(
+    {
+      type: "input",
+      name: "name",
+      message: "What is the employee s first name? ",
+    }
+  ) .then((answer) => {
+    db.query('INSERT INTO Employee (name) VALUE (?)', [
+      answer.name
+    ], function (err, results) {
+      console.table(results);
+      console.log(`Added ${answer.name} to Employee table`)
       userinput();
     });
   })
