@@ -30,18 +30,15 @@ function userinput() {
   inquirer.prompt({
     type: "list",
     name: "Menu",
-    message: "What would you like to enter?",
+    message: "What would you like to do?",
     choices: [
       "View All Department",
       "Add Department",
       "View All Employees",
       "Add Employee",
-      "Add First Name"
-      "Add Last Name"
       "Update Employee Role",
       "View All Roles",
       "Add Role",
-      "Add Salary",
       "Quit"
     ]
 
@@ -58,12 +55,6 @@ function userinput() {
     else if (answer.Menu === "Add Employee") {
       AddEmployee()
     }
-    else if (answer.Menu === "Add First Name") {
-      AddFirstname()
-    }
-    else if (answer.Menu === "Add Last Name") {
-      AddLastname()
-    }
     else if (answer.Menu === "Update Employee Role") {
       UpdateEmployeeRole()
     }
@@ -73,26 +64,23 @@ function userinput() {
     else if (answer.Menu === "Add Role") {
       AddRole()
     }
-    else if (answer.Menu === "Add Salary") {
-      AddSalary()
-    }
   })
 }
 
 function viewDepartment() {
-  db.query('SELECT * FROM Department', function (err, results) {
+  db.query('SELECT department.id, department.name FROM Department', function (err, results) {
     console.table(results);
     userinput();
   });
 }
 function viewEmployees() {
-  db.query('SELECT * FROM employee', function (err, results) {
+  db.query('SELECT employee.first_name, employee.last_name, CONCAT(manager.first_name," ",manager.last_name) AS manager, role.title AS title FROM employee JOIN role ON employee.role_id = role.id JOIN employee manager ON employee.manager_id = manager.id', function (err, results) {
     console.table(results);
     userinput();
   });
 }
 function viewRoles() {
-  db.query('SELECT * FROM role', function (err, results) {
+  db.query('SELECT role.id, role.title, role.salary FROM role', function (err, results) {
     console.table(results);
     userinput();
   });
@@ -105,7 +93,7 @@ function AddDepartment() {
       message: "Please enter Department name",
     }
   ) .then((answer) => {
-    db.query('INSERT INTO Department (name) VALUE (?)', [
+    db.query('INSERT INTO department (name) VALUE (?)', [
       answer.name
     ], function (err, results) {
       console.table(results);
@@ -114,19 +102,86 @@ function AddDepartment() {
     });
   })
 }
-function AddEmployee() {
-  inquirer.prompt(
+async function AddEmployee() {
+  const roleData = await db.promise().query('SELECT * FROM role')
+//  console.log(roleData)
+  const roleArray = roleData[0].map(role =>({
+    name: role.title,
+    value: role.id
+  }))
+ // console.log(roleArray)
+ const EmployeeData = await db.promise().query('SELECT * FROM employee')
+ const ManagerArray = EmployeeData[0].map(employee =>({
+  name: employee.first_name +" "+ employee.last_name,
+  value: employee.id
+}))
+  inquirer.prompt([
     {
       type: "input",
-      name: "name",
+      name: "FirstName",
       message: "What is the employee s first name? ",
-    }
-  ) .then((answer) => {
-    db.query('INSERT INTO Employee (name) VALUE (?)', [
-      answer.name
+    },
+    {
+      type: "input",
+      name: "LastName",
+      message: "What is the employee s last name? ",
+    },
+  // select role
+  {
+  type: "list", 
+  name: "roleName",
+  message: "What is the employee s role?",
+  choices: roleArray
+    },
+  {
+  type: "list", 
+  name: "manager",
+  message: "What is the manager name?",
+  choices: ManagerArray
+    } 
+  ]) .then((answer) => {
+    db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUE (?,?,?,?)', [
+      answer.FirstName, answer.LastName, answer.roleName, answer.manager
     ], function (err, results) {
-      console.table(results);
-      console.log(`Added ${answer.name} to Employee table`)
+      console.table(results)
+      console.log(`Added ${answer.FirstName} to Employee table`)
+      userinput();
+    });
+  })
+}
+async function UpdateEmployeeRole() {
+  const roleData = await db.promise().query('SELECT * FROM role')
+//  console.log(roleData)
+  const roleArray = roleData[0].map(role =>({
+    name: role.title,
+    value: role.id
+  }))
+ // console.log(roleArray)
+ const EmployeeData = await db.promise().query('SELECT * FROM employee')
+ const ManagerArray = EmployeeData[0].map(employee =>({
+  name: employee.first_name +" "+ employee.last_name,
+  value: employee.id
+}))
+  inquirer.prompt([
+  // select role
+  {
+  type: "list", 
+  name: "roleName",
+  message: "What is the employee s new role?",
+  choices: roleArray
+    },
+  {
+  type: "list", 
+  name: "manager",
+  message: "Who is the employee name?",
+  choices: ManagerArray
+    } 
+  ]) .then((answer) => {
+    db.query('UPDATE employee SET role_id = ? WHERE id = ?', [
+      answer.roleName, answer.manager
+    ], function (err, results) {
+      console.table(results)
+      console.log(`Added ${answer.roleName, answer.manager} to Employee table`)
       userinput();
     });
   })
