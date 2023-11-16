@@ -16,15 +16,6 @@ const db = mysql.createConnection(
   console.log(`Connected to the ggldesign_db database.`)
 );
 userinput()
-// QUery database using count favorite_books group by in_Stock
-// db.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', function (err, results) {
-//  console.log(results);
-// });
-
-// QUery database using sum(), max(), MIN() AVG  favorite_books group by sections
-// db.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', function (err, results) {
-// console.log(results);
-// });
 
 function userinput() {
   inquirer.prompt({
@@ -182,6 +173,43 @@ async function UpdateEmployeeRole() {
     ], function (err, results) {
       console.table(results)
       console.log(`Added ${answer.roleName, answer.manager} to Employee table`)
+      userinput();
+    });
+  })
+}
+
+// Add Role
+async function AddRole() {
+  const depData = await db.promise().query('SELECT * FROM department')
+//  console.log(depData)
+  const DepArray = depData[0].map(department =>({
+    name: department.name,
+    value: department.id
+  }))
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "RoleTitle",
+      message: "What is the name of the role? ",
+    },
+    {
+      type: "input",
+      name: "RoleSalary",
+      message: "What is the salary of the role? ",
+    },
+  // select role
+  {
+  type: "list", 
+  name: "RoleDepName",
+  message: "Which department does the role belong to?",
+  choices: DepArray
+    }
+  ]) .then((answer) => {
+    db.query('INSERT INTO role (title, salary, department_id) VALUE (?,?,?)', [
+      answer.RoleTitle, answer.RoleSalary, answer.RoleDepName
+    ], function (err, results) {
+    //  console.table(results)
+      console.log(`Added ${answer.RoleTitle} to Role table`)
       userinput();
     });
   })
