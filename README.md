@@ -5,7 +5,7 @@
 I created this project using sql setting up sqlgglengine database with three tables; Department, Role and Employee Developers to interact with information stored in the database interfacing with CMS"Content Management System" at the command line using node.js, inquirer and MYSQL.
 
 included is a walkthrough link video that demonstrates its functionality.
-[Video link](https://watch.screencastify.com/v/Kn2KeSqV2jnMZOoWVmNT)
+[Video link](https://watch.screencastify.com/v/QAEHQ2GqW9hoWa1PmfPo)
 
 [url github](https://github.com/GonzaloGodinez/sqlggleng)
 ## Usage
