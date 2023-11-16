@@ -65,7 +65,7 @@ function viewDepartment() {
   });
 }
 function viewEmployees() {
-  db.query('SELECT employee.first_name, employee.last_name, CONCAT(manager.first_name," ",manager.last_name) AS manager, role.title AS title FROM employee JOIN role ON employee.role_id = role.id JOIN employee manager ON employee.manager_id = manager.id', function (err, results) {
+  db.query('SELECT employee.first_name, employee.last_name, role.title AS title,department.name AS department, role.salary,CONCAT(manager.first_name," ",manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN employee manager ON employee.manager_id = manager.id JOIN department ON role.department_id = department.id', function (err, results) {
     console.table(results);
     userinput();
   });
